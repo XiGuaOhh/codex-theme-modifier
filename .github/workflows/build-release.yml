@@ -10,7 +10,7 @@ on:
       version:
         description: 'Stable version to build and publish (for example 2.0.1)'
         required: true
-        default: '2.1.0'
+        default: '2.1.1'
 
 permissions:
   contents: read
@@ -28,7 +28,7 @@ jobs:
         env:
           REQUESTED_VERSION: ${{ inputs.version }}
         run: |
-          $version = '2.1.0'
+          $version = '2.1.1'
           if ($env:GITHUB_REF_TYPE -eq 'tag') { $version = $env:GITHUB_REF_NAME.TrimStart('v') }
           elseif ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') { $version = $env:REQUESTED_VERSION }
           .\build.ps1 -Version $version

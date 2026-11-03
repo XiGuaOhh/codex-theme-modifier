@@ -24,8 +24,22 @@ namespace CodexThemeModifier {
         static void Check(bool condition,string name){if(!condition)throw new Exception("FAIL: "+name);checks++;Console.WriteLine("PASS "+name);}
         static void Reject(Action action,string name){bool rejected=false;try{action();}catch{rejected=true;}Check(rejected,name);}
         [STAThread]static int Main(string[] args){
+            if(args.Length==1&&args[0]=="--maintenance-parent-fixture"){System.Threading.Thread.Sleep(600);return 0;}
             string root=Path.GetFullPath(args[0]);string release=Path.GetFullPath(args[1]);Directory.CreateDirectory(root);
             try{
+                string testProgram=Assembly.GetExecutingAssembly().Location;
+                using(var departed=System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo{FileName=testProgram,Arguments="--maintenance-parent-fixture",UseShellExecute=false,CreateNoWindow=true})){
+                    departed.WaitForExit();MaintenanceCore.WaitForParentProcess(departed,testProgram,2000);Check(true,"exited-parent-does-not-abort-maintenance");
+                }
+                using(var live=System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo{FileName=testProgram,Arguments="--maintenance-parent-fixture",UseShellExecute=false,CreateNoWindow=true})){
+                    MaintenanceCore.WaitForParentProcess(live,testProgram,3000);Check(live.HasExited,"maintenance-waits-for-live-parent");
+                }
+                using(var wrong=System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo{FileName=testProgram,Arguments="--maintenance-parent-fixture",UseShellExecute=false,CreateNoWindow=true})){
+                    Reject(()=>MaintenanceCore.WaitForParentProcess(wrong,Path.Combine(root,"wrong.exe"),3000),"maintenance-rejects-different-parent-image");wrong.WaitForExit();
+                }
+                using(var slow=System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo{FileName=testProgram,Arguments="--maintenance-parent-fixture",UseShellExecute=false,CreateNoWindow=true})){
+                    Reject(()=>MaintenanceCore.WaitForParentProcess(slow,testProgram,10),"maintenance-timeout-does-not-stop-parent");Check(!slow.HasExited,"parent-remains-running-after-maintenance-timeout");slow.WaitForExit();
+                }
                 var paths=new AppPaths(Path.Combine(root,"installation"),Path.Combine(root,"programs"),"unused-test-registry");
                 string original=Path.Combine(root,"official","app","ChatGPT.exe");Directory.CreateDirectory(Path.GetDirectoryName(original));File.WriteAllText(original,"unchanged official fixture");string originalHash=JsonFiles.Hash(original);
                 var p=new PackageInfo{Found=true,Root=Path.Combine(root,"official"),Executable=original,AppId="OpenAI.Codex_TEST!App",PackageFamily="OpenAI.Codex_TEST",Version="99.0.0",DisplayName="Codex"};

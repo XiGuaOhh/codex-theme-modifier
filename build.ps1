@@ -1,4 +1,4 @@
-﻿param([string]$Version='2.1.0',[string]$Output)
+﻿param([string]$Version='2.1.1',[string]$Output)
 $ErrorActionPreference='Stop'
 if($Version -notmatch '^\d+\.\d+\.\d+$'){throw 'Use a stable semantic version, for example 2.0.0.'}
 if(-not $Output){$Output=Join-Path $PSScriptRoot 'dist'}
