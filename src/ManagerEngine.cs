@@ -84,7 +84,7 @@ namespace CodexThemeModifier {
                 string ext=file.Extension.ToLowerInvariant();var types=new Dictionary<string,string>{{".png","image/png"},{".jpg","image/jpeg"},{".jpeg","image/jpeg"},{".webp","image/webp"},{".gif","image/gif"},{".avif","image/avif"}};
                 if(!types.ContainsKey(ext))throw new IOException("请选择 PNG、JPG、WebP、GIF 或 AVIF 图片。");
                 Directory.CreateDirectory(Paths.Preferences);JsonFiles.CopyAtomic(file.FullName,Path.Combine(Paths.Preferences,"background.bin"));
-                config.imageAction="replace";config.imageFile="preferences/background.bin";config.imageName=file.Name;config.imageMime=types[ext];config.enabled=true;
+                config.imageAction="replace";config.imageFile="preferences/background.bin";config.imageName=file.Name;config.imageMime=types[ext];
             }
             config.revision=Guid.NewGuid().ToString("N");JsonFiles.Write(Paths.Config,config);
         }

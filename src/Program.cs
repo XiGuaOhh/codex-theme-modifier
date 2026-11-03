@@ -10,7 +10,7 @@ namespace CodexThemeModifier {
             try{
                 var desktop=new WindowsDesktop();var paths=AppPaths.Current();var engine=new ManagerEngine(paths,desktop);
                 if(Array.IndexOf(args,"--inspect")>=0){var p=desktop.Probe();Console.WriteLine(JsonFiles.Serializer().Serialize(new{version=BuildInfo.Version,package=p,installed=engine.State()!=null,github=BuildInfo.Website}));return 0;}
-                int preview=Array.IndexOf(args,"--preview");if(preview>=0){if(preview+1>=args.Length)return 2;using(var f=new ManagerForm(engine,desktop,true))f.SavePreview(Path.GetFullPath(args[preview+1]));return 0;}
+                int preview=Array.IndexOf(args,"--preview");if(preview>=0){if(preview+1>=args.Length)return 2;int page=Array.IndexOf(args,"--page");using(var f=new ManagerForm(engine,desktop,true)){f.ConfigurePreview(Array.IndexOf(args,"--dark")>=0,page>=0&&page+1<args.Length?args[page+1]:"appearance",Array.IndexOf(args,"--compact")>=0);f.SavePreview(Path.GetFullPath(args[preview+1]));}return 0;}
                 if(Array.IndexOf(args,"--check-update")>=0){var u=UpdateService.Check();Console.WriteLine(JsonFiles.Serializer().Serialize(new{version=BuildInfo.Version,latest=u==null?null:u.Version,newer=u!=null&&u.Newer,digest=u==null?null:u.Digest}));return 0;}
                 bool created;using(var mutex=new Mutex(true,"Local\\CodexThemeModifier.Manager",out created)){
                     if(!created){MessageBox.Show("修改器窗口已在运行。","Codex Theme Modifier",MessageBoxButtons.OK,MessageBoxIcon.Information);return 0;}

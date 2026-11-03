@@ -1,4 +1,4 @@
-﻿param([string]$Version='2.0.0',[string]$Output)
+﻿param([string]$Version='2.1.0',[string]$Output)
 $ErrorActionPreference='Stop'
 if($Version -notmatch '^\d+\.\d+\.\d+$'){throw 'Use a stable semantic version, for example 2.0.0.'}
 if(-not $Output){$Output=Join-Path $PSScriptRoot 'dist'}
@@ -42,8 +42,11 @@ foreach($file in Get-ChildItem -LiteralPath $runtime -File){$resources+=('/resou
 $resources+=('/resource:'+$worker+',payload.MaintenanceWorker.exe')
 $resources+=('/resource:'+$launcher+',payload.ChatGPTTheme.exe')
 $resources+=('/resource:'+$iconPath+',payload.modifier.ico')
+$resources+=('/resource:'+(Join-Path $PSScriptRoot 'assets\fonts\GroveRoundF-Regular.ttf')+',ui.rounded.ttf')
+$resources+=('/resource:'+(Join-Path $PSScriptRoot 'assets\fonts\NOTICE.md')+',ui.font-notice')
+$resources+=('/resource:'+(Join-Path $PSScriptRoot 'assets\fonts\OFL.txt')+',ui.font-license')
 $sources=@($buildInfo)
-foreach($name in @('Models.cs','Platform.cs','RuntimeClient.cs','ManagerEngine.cs','UpdateService.cs','ManagerForm.cs','Program.cs')){$sources+=Join-Path $PSScriptRoot ('src\'+$name)}
+foreach($name in @('Models.cs','Platform.cs','RuntimeClient.cs','ManagerEngine.cs','UpdateService.cs','UiControls.cs','ManagerForm.cs','Program.cs')){$sources+=Join-Path $PSScriptRoot ('src\'+$name)}
 $sources+=Join-Path $runtime 'ThemeHost.cs'
 $exe=Join-Path $Output 'CodexThemeModifier.exe'
 & $csc @common @refs @resources ('/out:'+$exe) @sources

@@ -70,6 +70,12 @@ namespace CodexThemeModifier {
         public List<string> OwnedFiles {get;set;}
         public InstallState(){Shortcuts=new List<ShortcutRecord>();OwnedFiles=new List<string>();CheckUpdates=true;}
     }
+    internal sealed class UiPreferences {
+        public string Theme {get;set;}
+        public bool SoftBackground {get;set;}
+        public UiPreferences(){Theme="system";SoftBackground=true;}
+        public void Normalize(){if(Theme!="light"&&Theme!="dark")Theme="system";}
+    }
     internal sealed class ThemeConfig {
         public string revision {get;set;}
         public bool enabled {get;set;}

@@ -23,7 +23,7 @@ namespace CodexThemeModifier {
                 if(!plan.DeletePreferences)JsonFiles.Write(Path.Combine(allowed.Preferences,"retained-state.json"),new InstallState{ProductId=BuildInfo.ProductId,InstanceId=plan.InstanceId,Version=BuildInfo.Version});
                 foreach(string name in BuildInfo.OwnedFiles){if(name=="modifier-state.json")continue;string file=allowed.FilePath(name);if(File.Exists(file))File.Delete(file);}
                 if(plan.DeletePreferences){
-                    foreach(string name in new[]{"theme.json","background.bin","applied-revision.txt","retained-state.json"}){string file=Path.Combine(allowed.Preferences,name);if(File.Exists(file))File.Delete(file);}
+                    foreach(string name in new[]{"theme.json","background.bin","applied-revision.txt","retained-state.json","modifier-ui.json"}){string file=Path.Combine(allowed.Preferences,name);if(File.Exists(file))File.Delete(file);}
                     // A tiny reset marker prevents old in-app preferences from returning on reinstall.
                     JsonFiles.Write(Path.Combine(allowed.Preferences,"retained-state.json"),new InstallState{ProductId=BuildInfo.ProductId,InstanceId=plan.InstanceId,Version=BuildInfo.Version,ResetBrowserPreferences=true});
                 }

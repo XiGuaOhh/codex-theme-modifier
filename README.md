@@ -6,12 +6,21 @@
 
 [下载最新版本](https://github.com/XiGuaOhh/codex-theme-modifier/releases/latest) · [报告问题](https://github.com/XiGuaOhh/codex-theme-modifier/issues) · [工作原理与边界](docs/architecture.md)
 
-![修改器界面，演示状态](assets/preview.png)
+![修改器浅色界面，演示状态](assets/preview.png)
+
+v2.1 重新设计了修改器界面：窄图标侧栏、大幅背景预览、浅色 / 深色 / 跟随系统、圆体文字与柔和卡片。背景、透明度和图片位置可以先预览，再保存应用；安装管理与更新分别位于“管理”“设置”页面。
+
+<details>
+<summary>深色界面</summary>
+
+![修改器深色界面，演示状态](assets/preview-dark.png)
+
+</details>
 
 ## 使用
 
 1. 在 Releases 下载 `CodexThemeModifier.exe`，双击打开。首次打开只检测安装状态。
-2. 点击 **安装并启用**，然后选择图片，调整参数并点击 **保存应用**。
+2. 选择图片、调整参数，然后点击 **安装并应用**；已安装时按钮显示 **保存并应用**。“管理”页面也提供单独的安装、修复和关闭入口。
 3. 在开始菜单搜索 **Codex（自定义背景）**，从这个入口启动。可以把它固定到开始菜单或任务栏。
 4. Codex 标题栏的调色盘按钮位于最小化按钮左边，可以直接调整背景。
 
@@ -60,7 +69,7 @@ Windows 10/11，使用系统 .NET Framework 编译器，无 NuGet 或第三方�
 .\tests.ps1
 ```
 
-输出：`dist\CodexThemeModifier.exe` 和校验文件。版本参数：`build.ps1 -Version 2.0.1`。
+输出：`dist\CodexThemeModifier.exe` 和校验文件。版本参数：`build.ps1 -Version 2.1.1`。
 
 可选的实机检查：
 
@@ -71,5 +80,7 @@ Windows 10/11，使用系统 .NET Framework 编译器，无 NuGet 或第三方�
 实机检查会打开一个独立用户资料的官方 Codex 窗口，验证背景、中文编码、关闭恢复和官方文件完整性；只清理它自己创建的测试进程。不会关闭你原来打开的 Codex。测试产生的隔离资料保存在被 Git 忽略的 `build` 目录。
 
 [已验证的范围](docs/validation.md) · [MIT License](LICENSE)
+
+字体为采用 SIL Open Font License 1.1 的 Token Grove Rounded（由寒蝉全圆体衍生），仅在修改器进程中加载，不安装到系统。授权及来源见 [第三方说明](THIRD_PARTY_NOTICES.md)。
 
 维护者发布新版：在仓库 **Actions → Build, test and release → Run workflow** 中选择 `main` 并填入稳定版本号。构建和检查通过后会自动创建对应标签及 Release，附上程序与校验文件。也支持推送 `vX.Y.Z` 标签发布。已发布版本不会被自动覆盖。

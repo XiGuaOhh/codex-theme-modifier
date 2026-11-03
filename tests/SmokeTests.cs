@@ -38,6 +38,7 @@ namespace CodexThemeModifier {
                 string image=Path.Combine(root,"test.png");using(var b=new Bitmap(2,2)){b.SetPixel(0,0,Color.Red);b.Save(image,System.Drawing.Imaging.ImageFormat.Png);}
                 var settings=new ThemeConfig{dim=999,blur=-1};engine.SaveTheme(settings,image);
                 var saved=JsonFiles.Read<ThemeConfig>(paths.Config);Check(saved.dim==90&&saved.blur==0&&saved.imageAction=="replace","settings-normalized-and-image-copied");
+                engine.SaveTheme(new ThemeConfig{enabled=false},image);Check(!JsonFiles.Read<ThemeConfig>(paths.Config).enabled,"saving-image-respects-background-off-switch");
                 engine.SaveTheme(new ThemeConfig{dim=30},null);saved=JsonFiles.Read<ThemeConfig>(paths.Config);Check(saved.imageAction=="replace"&&saved.imageFile=="preferences/background.bin","pending-image-survives-settings-edit");
                 File.WriteAllText(Path.Combine(paths.Preferences,"applied-revision.txt"),saved.revision);
                 engine.SaveTheme(new ThemeConfig{dim=50},null);saved=JsonFiles.Read<ThemeConfig>(paths.Config);Check(saved.imageAction=="keep","applied-image-not-forced-over-native-selection");

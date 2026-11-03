@@ -6,3 +6,5 @@
 *.yml text eol=lf
 *.png binary
 *.ico binary
+*.ttf binary
+assets/fonts/OFL.txt -whitespace
