@@ -1,0 +1,53 @@
+name: Build, test and release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build standalone executable
+        shell: powershell
+        run: |
+          $version = '2.0.0'
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $version = $env:GITHUB_REF_NAME.TrimStart('v') }
+          .\build.ps1 -Version $version
+      - name: Check installation, removal and update verification
+        shell: powershell
+        run: .\tests.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: |
+            dist/CodexThemeModifier.exe
+            dist/CodexThemeModifier.exe.sha256
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-release
+          path: release
+      - name: Publish verified Windows assets
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$env:GITHUB_REF_NAME" --verify-tag --title "Codex Theme Modifier $env:GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md release/CodexThemeModifier.exe release/CodexThemeModifier.exe.sha256
+          if ($LASTEXITCODE) { throw 'GitHub release failed.' }

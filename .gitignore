@@ -1,0 +1,13 @@
+/build/
+/dist/
+/.vs/
+*.user
+*.log
+*.tmp
+runtime/theme-host-state.json
+runtime/启动日志.txt
+runtime/disabled.flag
+runtime/enabled.flag
+runtime/preferences/
+Thumbs.db
+Desktop.ini
