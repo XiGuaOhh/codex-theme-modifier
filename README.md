@@ -71,3 +71,5 @@ Windows 10/11，使用系统 .NET Framework 编译器，无 NuGet 或第三方�
 实机检查会打开一个独立用户资料的官方 Codex 窗口，验证背景、中文编码、关闭恢复和官方文件完整性；只清理它自己创建的测试进程。不会关闭你原来打开的 Codex。测试产生的隔离资料保存在被 Git 忽略的 `build` 目录。
 
 [已验证的范围](docs/validation.md) · [MIT License](LICENSE)
+
+维护者发布新版：在仓库 **Actions → Build, test and release → Run workflow** 中选择 `main` 并填入稳定版本号。构建和检查通过后会自动创建对应标签及 Release，附上程序与校验文件。也支持推送 `vX.Y.Z` 标签发布。已发布版本不会被自动覆盖。

@@ -6,6 +6,11 @@ on:
     tags: ['v*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Stable version to build and publish (for example 2.0.1)'
+        required: true
+        default: '2.0.0'
 
 permissions:
   contents: read
@@ -13,14 +18,21 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.build.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - name: Build standalone executable
+        id: build
         shell: powershell
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
         run: |
           $version = '2.0.0'
           if ($env:GITHUB_REF_TYPE -eq 'tag') { $version = $env:GITHUB_REF_NAME.TrimStart('v') }
+          elseif ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') { $version = $env:REQUESTED_VERSION }
           .\build.ps1 -Version $version
+          [IO.File]::AppendAllText($env:GITHUB_OUTPUT, "version=$version`n", [Text.UTF8Encoding]::new($false))
       - name: Check installation, removal and update verification
         shell: powershell
         run: .\tests.ps1
@@ -33,7 +45,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'
+    if: (startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     needs: build
     runs-on: windows-latest
     permissions:
@@ -48,6 +60,10 @@ jobs:
         shell: powershell
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.build.outputs.version }}
         run: |
-          gh release create "$env:GITHUB_REF_NAME" --verify-tag --title "Codex Theme Modifier $env:GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md release/CodexThemeModifier.exe release/CodexThemeModifier.exe.sha256
+          $tag = "v$env:RELEASE_VERSION"
+          $releaseArgs = @('--target', $env:GITHUB_SHA)
+          if ($env:GITHUB_REF_TYPE -eq 'tag') { $releaseArgs += '--verify-tag' }
+          gh release create $tag @releaseArgs --title "Codex Theme Modifier $tag" --notes-file RELEASE_NOTES.md release/CodexThemeModifier.exe release/CodexThemeModifier.exe.sha256
           if ($LASTEXITCODE) { throw 'GitHub release failed.' }
