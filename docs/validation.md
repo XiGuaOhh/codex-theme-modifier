@@ -39,4 +39,12 @@
 
 背景适配依赖官方页面的结构与样式变量。未来版本可能需要更新选择器，官方安装身份和更新入口保留也不意味着所有第三方主题效果永远兼容。出现外观问题可关闭主题并从官方入口启动。
 
-GitHub 在线发行与下载验证在首次发布时另外执行；自动测试不携带 GitHub 账号或访问令牌。
+## GitHub 在线发行验收
+
+v2.0.0 已由 [GitHub Actions 构建、检查并发布](https://github.com/XiGuaOhh/codex-theme-modifier/actions/runs/41583267554)，发行资产为 `CodexThemeModifier.exe` 和对应校验文件。
+
+在线验收复用软件实际的 `UpdateService`，以 `1.9.9` 版本标识访问公开的最新 Release：成功发现 `2.0.0`，下载 203264 字节的发行程序，校验值与 GitHub 资产 `digest` 一致。随后运行下载到的真实发行程序 `--check-update`，正确报告当前版本和最新版本均为 `2.0.0`，无需更新。
+
+发行程序 SHA-256：`7129f3770d3505dd36503491954b4faec5876ff10eff58bb9fac8a0ee694edcd`。
+
+以上检查没有安装或更新真实用户的 Codex 主题目录。公开下载和版本检测不携带 GitHub 账号或访问令牌。
